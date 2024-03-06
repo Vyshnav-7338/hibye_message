@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home Page</title>
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        /* Custom CSS */
+        body {
+            background-color: #f8f9fa;
+        }
+
+        .container {
+            margin-top: 10px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Home Page -->
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">Home</div>
+                    <div class="card-body">
+                        <!-- Dropdown for selecting option -->
+                        <div class="form-group">
+                            <label for="options">Select option:</label>
+                            <select class="form-control" id="options">
+                                <option value="all">All</option>
+                                <option value="female">Female</option>
+                                <option value="male">Male</option>
+                                <option value="pending">Pending</option>
+                                <option value="rejected">Rejected</option>
+                                <option value="approved">Approved</option>
+                            </select>
+                        </div>
+                        <form>
+                            <div class="form-group">
+                                <label for="message">Content</label>
+                                <textarea class="form-control" id="message" rows="3"
+                                    placeholder="Enter your message"></textarea>
+                                <label for="message">Footer(optinal)</label>
+                                    <textarea class="form-control" id="footer" rows="3"
+                                    placeholder="Enter your Footer msg or Hibye msg pass"></textarea>
+                            </div>
+                            <button type="button" class="btn btn-primary" onclick="sendTextMsg()">Send Text
+                                Message</button>
+                            <!-- Logout button -->
+                            <button type="button" class="btn btn-danger" onclick="logout()">Logout</button>
+                            <!-- Additional buttons can be added here -->
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS and dependencies -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+    <script>
+        function sendTextMsg() {
+            var message = document.getElementById('message').value;
+            var footer = document.getElementById('footer').value;
+            var selectedOption = document.getElementById('options').value;
+
+            var apiUrl = '/TextMsg';
+
+            if (selectedOption !== 'all') {
+                apiUrl += '/' + selectedOption;
+            }
+
+            fetch(`http://68.178.163.246:7000${apiUrl}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    text: message,
+                    contact:footer
+                }),
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    alert('Text message sent successfully.');
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('An error occurred while processing your request. Please try again later.');
+                });
+        }
+        document.addEventListener('DOMContentLoaded', function() {
+            if (!localStorage.getItem('token')) {
+                window.location.href = './Login.html';
+            }
+        });
+        // Logout function
+        function logout() {
+            localStorage.removeItem('token');
+            window.location.href = './Login.html';
+        }
+    </script>
+
+</body>
+
+</html>
